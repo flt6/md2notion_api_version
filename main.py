@@ -7,6 +7,7 @@ from rich.progress import Progress
 from rich.traceback import install,Traceback
 from rich import print
 import os
+
 def get_parameter():
     parser = argparse.ArgumentParser()
     parser.add_argument("--file_path", '-f',help="input file_path")
@@ -34,7 +35,7 @@ def upload_single_file(filepath, client, uploader,filename=None, start_line = 0)
     notion_blocks=notion_blocks[start_line:]
     with Progress() as prog:
         task=prog.add_task(filename,total=len(notion_blocks))
-        for content in notion_blocks:
+        for i,content in enumerate(notion_blocks):
             try:
                 uploader.uploadBlock(content, client.notion, page_id)
             except Exception as e:
@@ -48,12 +49,26 @@ def upload_single_file(filepath, client, uploader,filename=None, start_line = 0)
 if __name__ == '__main__':
 
     install()
-   
-    args = get_parameter()
-    connection_key = args.connection_key
-    database_id  = args.database_id
+    
+    d=Path("doc")
+
+    connection_key = "****"
+    database_id  = "****"
     client      = NotionSyncDatabase(connection_key, database_id)
-    uploader       = Md2NotionUploader(image_host='smms', smms_token=args.smms_token)
-    filepath   = args.file_path
-    start_line = args.start_line
-    upload_single_file(filepath, client, uploader, start_line = start_line)
+    uploader       = Md2NotionUploader(image_host='smms')
+
+    for file in d.iterdir():
+        if file.suffix == ".md":
+            filepath = file.resolve()
+            upload_single_file(filepath, client, uploader)
+            
+
+
+    # args = get_parameter()
+    # connection_key = args.connection_key
+    # database_id  = args.database_id
+    # client      = NotionSyncDatabase(connection_key, database_id)
+    # uploader       = Md2NotionUploader(image_host='smms', smms_token=args.smms_token)
+    # filepath   = args.file_path
+    # start_line = args.start_line
+    # upload_single_file(filepath, client, uploader, start_line = start_line)

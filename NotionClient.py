@@ -11,26 +11,26 @@ class NotionSyncDatabase:
         self.file_names   = {}
         for page in full_or_partial_pages["results"]:
             if not is_full_page(page):continue
-            if len(page['properties']['Name']['title'])==0:continue
-            page_title = page['properties']['Name']['title'][0]['plain_text']
+            if len(page['properties']['title']['title'])==0:continue
+            page_title = page['properties']['title']['title'][0]['plain_text']
             if  page_title not in self.file_names:
                 self.file_names[page_title] = 1
             else:
-                print(f"WARNING: detect repeat file names:{page_title}")
+                print(f"[red][bold]WARNING: detect repeat file names:{page_title}[/bold][/red]")
         self.file_names = list(self.file_names.keys())
         print(f"this database has totally {len(self.file_names)} unique items")
     def show_items(self):
         full_or_partial_pages = self.notion.databases.query(database_id=self.database_id)                
         for page in full_or_partial_pages["results"]:
             if not is_full_page(page):continue
-            name_list = page['properties']['Name']['title']
+            name_list = page['properties']['title']['title']
             if len(name_list) == 0:continue
             page_title = name_list[0]['plain_text']
             print(f"Name:{page_title} Created at: {page['created_time']} _id:{page['id']}")
     def create_new_page(self, page_name, tags=[{"name": "general"}],**kargs):
         new_page = {
-            "Name": {"title": [{"text": {"content": page_name}}]},
-            "Tags": {"type": "multi_select", "multi_select":tags},
+            "title": {"title": [{"text": {"content": page_name}}]},
+            "tags": {"type": "multi_select", "multi_select":tags},
         }
         if page_name not in self.file_names:
             self.notion.pages.create(parent={"database_id": self.database_id}, properties=new_page)
@@ -40,7 +40,7 @@ class NotionSyncDatabase:
     def get_page_id_via_name(self, page_name):
         query_string = {
                 "database_id": self.database_id,
-                "filter": {"property": "Name", "rich_text": {"contains": page_name}},
+                "filter": {"property": "title", "rich_text": {"contains": page_name}},
             }
         results = self.notion.databases.query(**query_string).get("results")
         no_of_results = len(results)
