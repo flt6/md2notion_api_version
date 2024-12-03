@@ -115,6 +115,10 @@ class Md2NotionUploader:
             annotations['code'] = True
             text = text.replace('`', '')
         
+        if '==' in text:
+            annotations['color'] = "yellow_background"
+            text = text.replace('==', '')
+        
         return annotations, text
 
     
@@ -296,8 +300,11 @@ class Md2NotionUploader:
             content_block[0]['code']['language'] = language.lower()
         else:
             content_block = [{new_name:{}}]
-        response      = notion.blocks.children.append(block_id=page_id, children=content_block)
-        
+        try:
+            response      = notion.blocks.children.append(block_id=page_id, children=content_block)
+        except KeyboardInterrupt as e:raise e
+        except Exception:
+            response      = notion.blocks.children.append(block_id=page_id, children=content_block)
         blockChildren = None
         if "children" in blockDescriptor:
             blockChildren = blockDescriptor["children"]
