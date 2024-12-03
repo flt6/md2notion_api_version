@@ -6,9 +6,9 @@ Use Notion API to upload .md file to notion.so for typora writing style.
 Clone the repository and install dependencies:
 
 ```bash
-pip install md2notion
 git clone https://github.com/veya2ztn/md2notion_api_version.git
 cd notion-markdown-uploader
+pip install -r requirements.txt
 
 ```
 
@@ -41,7 +41,6 @@ Step2: link `connection` to the synced database page:
 After setup, you need record
 
 - The **Database ID**. (For example, `88c52f937663497d93b245934c741f39`. )
-  - You need manually add `-` and obtain the true id `88c52f93-7663-497d-93b2-45934c741f39`
 - The **Connection Secrets**.
 
 ### Setup SM.MS
