@@ -1,5 +1,7 @@
 from notion_client import Client
 from notion_client.helpers import is_full_page
+from rich import print
+from rich.markdown import Markdown
 
 class NotionSyncDatabase:
     def __init__(self, connection_key, database_id ):
@@ -32,9 +34,9 @@ class NotionSyncDatabase:
         }
         if page_name not in self.file_names:
             self.notion.pages.create(parent={"database_id": self.database_id}, properties=new_page)
-            print(f"You add {page_name} page into database!")
+            print(Markdown(f"You add `{page_name}` page into database!"))
         else:
-            print(f"Use existed {page_name} page in database!")
+            print(Markdown(f"Use existed `{page_name}` page in database!"))
     def get_page_id_via_name(self, page_name):
         query_string = {
                 "database_id": self.database_id,
